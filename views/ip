@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get IP and User Agent</title>
+    <script>
+        async function fetchUserData() {
+            try {
+                // Get the user's IP address
+                const ipResponse = await fetch('https://api.ipify.org?format=json');
+                const ipData = await ipResponse.json();
+                const ip = ipData.ip;
+
+                // Get additional IP information from ipinfo.io
+                const ipInfoResponse = await fetch(`https://ipinfo.io/${ip}/json?token=YOUR_IPINFO_TOKEN`);
+                const ipInfoData = await ipInfoResponse.json();
+
+                // Get the user agent
+                const userAgent = navigator.userAgent;
+
+                // Display the information
+                document.getElementById('ip').textContent = `IP Address: ${ip}`;
+                document.getElementById('user-agent').textContent = `User Agent: ${userAgent}`;
+                document.getElementById('ip-info').textContent = `IP Info: ${JSON.stringify(ipInfoData, null, 2)}`;
+
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                document.getElementById('ip').textContent = 'Failed to retrieve IP address.';
+            }
+        }
+
+        // Execute the function when the document is loaded
+        document.addEventListener('DOMContentLoaded', fetchUserData);
+    </script>
+</head>
+<body>
+    <h1>Get IP and User Agent</h1>
+    <p id="ip">IP Address: Loading...</p>
+    <p id="user-agent">User Agent: Loading...</p>
+    <pre id="ip-info">IP Info: Loading...</pre>
+</body>
+</html>
